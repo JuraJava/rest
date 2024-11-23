@@ -26,5 +26,6 @@ public class PupilRestController {
         pupils.add(pupil3);
 
         return pupils;
+        // Это самые последние изменения
     }
 }
