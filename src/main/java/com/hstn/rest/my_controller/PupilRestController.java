@@ -69,4 +69,5 @@ public class PupilRestController {
 
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
+    // Это последние изменения 25.11.2024
 }
