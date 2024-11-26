@@ -5,6 +5,7 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +50,7 @@ public class PupilRestController {
         // в параметрах аннотации @PathVariable дописать: (@PathVariable (name = "pupilIndex") int id)
 
         if (pupilIndex < 0 || pupilIndex >= pupils.size()) {
-            throw new PupilNotFoundException("Pupils id " + pupilIndex + " not found");
+            throw new PupilNotFoundException("Pupil id " + pupilIndex + " not found");
         }
         // Здесь мы отлавливаем ошибку
         return pupils.get(pupilIndex);
@@ -69,5 +70,21 @@ public class PupilRestController {
 
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
-    // Это последние изменения 25.11.2024
+
+    @ExceptionHandler
+    public ResponseEntity<PupilErrorResponse> handlerException (MethodArgumentTypeMismatchException exception) {
+        // Название класса в параметре метода мы взяли, т.к. такое отображалось в логах
+        // тогда, когда мы этот метод закомментировали и запустили наше приложение
+        // Этот метод можно было назвать по другому, но т.к. параметры разные,
+        // значит и методы тоже разные
+        PupilErrorResponse error = new PupilErrorResponse();
+        error.setStatus(HttpStatus.BAD_REQUEST.value());
+        // BAD_REQUEST выбираем здесь и ниже потому что на странице нашего приложения в браузере
+        // когда ошибка у нас не была обработано отображалось ... BAD_REQUEST ....
+        error.setMessage("User enter invalid data. You must enter only Integer values.");
+        error.setTimestamp(System.currentTimeMillis());
+
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
 }
